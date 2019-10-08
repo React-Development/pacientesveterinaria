@@ -11,7 +11,12 @@ class App extends Component {
 
   // Cuando laaplicacion carga
   componentDidMount() {
-
+    const citasLS = localStorage.getItem('citas');
+    if(citasLS) {
+      this.setState({ 
+        citas : JSON.parse(citasLS) 
+      });
+    }
   }
 
   // Cuando eliminamos o agregamos una nueva cita
