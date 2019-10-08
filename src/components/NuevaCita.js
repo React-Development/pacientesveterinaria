@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import uuid from 'uuid';
 
 class NuevaCita extends Component {
   state = {
@@ -8,7 +9,8 @@ class NuevaCita extends Component {
           fecha: '',
           hora: '',
           sintomas: ''
-      }
+      },
+      error : false
   };
 
   // En e.target.name -> name se toma del atributo en nuestra etiqueta, en este caso se toma de nuestro input
@@ -17,7 +19,6 @@ class NuevaCita extends Component {
   //Este evento detecta el cambio (en este caso lo que se ingresa) dentro de los input
   handleChange = e => {
        // console.log(e.target.name + ': ' + e.target.value);
-
       // colocar lo que el usuario escribe en el state
       this.setState({
           cita : {
@@ -26,6 +27,41 @@ class NuevaCita extends Component {
               [e.target.name] : e.target.value
           }
       })
+  }
+
+  // Cuando el usuario envia el formulario
+  // Prevent default sirve para escribir el codigo con lo que se va hacer cuando se envie el formulario
+  handleSubmit = e => {
+      e.preventDefault();
+
+      // extraer los valores del state
+      const { mascota, propietario, fecha, hora, sintomas } = this.state.cita; 
+
+      // validar que todos  los campos esten llenos
+      if(mascota === '' || propietario === '' || fecha  === '' || hora === '' || sintomas === '') {
+        this.setState({
+            error: true
+        });
+
+        // detener la ejecucion
+        return;
+
+      }
+    
+      // agregar objeto con los datos (Id unico)
+      const nuevaCita = {...this.state.cita};
+      /* Las propiedades de un objeto si pueden ser reescritas
+         En este caso solo se esta agregando la propiedad id a nuestra cita */
+     nuevaCita.id = uuid();
+
+
+      /* agregar la cita al state de App
+
+       Cuando es un class component se acceden a los props de la siguiente forma */
+
+      this.props.crearNuevaCita(nuevaCita);
+
+
   }
 
 
@@ -37,7 +73,9 @@ class NuevaCita extends Component {
             Llena el formulario para crear una nueva cita
           </h2>
 
-          <form>
+          <form 
+             onSubmit={this.handleSubmit}
+          >
             <div className="form-group row">
               <label className="col-sm-4 col-lg-2 col-form-label">
                 Nombre Mascota
